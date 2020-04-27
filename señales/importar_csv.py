@@ -1,8 +1,11 @@
+import time
 import numpy as np
 import matplotlib.pyplot as plt
 
 
 nombreArchivo = 'rampa_con errores.csv' #Aca va el nombre del archivo
+
+ti = time.time()
 
 data = np.genfromtxt(nombreArchivo, skip_header = 2, dtype = 'U')
 overrunsChecking =  np.char.find(data,'Overruns')
@@ -19,7 +22,9 @@ for pos in overrunsPositions[0]:
 	overruns += 1
 
 
+tf = time.time()
 
+print('tardo:', tf-ti)
 
 
 
