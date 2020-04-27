@@ -3,15 +3,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-nombreArchivo = 'rampa_con errores.csv' #Aca va el nombre del archivo
+nombreArchivo = 'TEST_20000000_000702.csv' #Aca va el nombre del archivo
 
 ti = time.time()
 
-data = np.genfromtxt(nombreArchivo, skip_header = 2, dtype = 'U')
+#data = np.genfromtxt(nombreArchivo, skip_header = 2, dtype = 'U')
+data = np.loadtxt(nombreArchivo, skiprows = 2, dtype = 'U')
+print('Importado')
 overrunsChecking =  np.char.find(data,'Overruns')
+print('Overruns chequeados')
 overrunsPositions = np.where(overrunsChecking == 0)
 
-
+t1 = time.time()
+print(len(overrunsPositions))
+print('Tiempo parcial', t1-ti)
 counter = 0
 overruns = 0
 for pos in overrunsPositions[0]:
@@ -30,3 +35,8 @@ print('tardo:', tf-ti)
 
 
 
+t0 = time.time()
+data = np.loadtxt(nombreArchivo, skiprows = 2, dtype = 'U')
+t1 = time.time()
+data = np.genfromtxt(nombreArchivo, skip_header = 2, dtype = 'U')
+t2 = time.time()
