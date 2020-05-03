@@ -57,6 +57,6 @@ for i in range(nro_puntos):
 			delays_medidos[i*nro_samples:(i+1)*nro_samples, pos] *= (tiempos[j] - tiempos[k]) + (np.random.rand(nro_samples)*2 -1) * (2/f)
 			pos += 1
 
-np.save('delays_real.npy', delays_real)
-np.save('delays_medidos.npy', delays_medidos)
-np.save('fuentes_pos', fuentes_pos)
+np.save('delays_real_test.npy', delays_real)
+np.save('delays_medidos_test.npy', delays_medidos)
+np.save('fuentes_pos_test', fuentes_pos)
