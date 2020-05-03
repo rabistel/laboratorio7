@@ -16,7 +16,7 @@ tst_data[:, len(tst_delay[0]):] = tst_tgt
 BB = 1 #Batch size del dataset de testeo
 tst_load = torch.utils.data.DataLoader(dataset = tst_data, batch_size = BB, shuffle = True)
 
-N = len(tst_data[0])
+N = len(tst_delay[0])
 C = 3 #Cantidad de unidades de salida son 3 porque es la salida x, y, z
 
 #Declaro la clase de mlp
@@ -34,8 +34,7 @@ class MLP(torch.nn.Module):
         y = output(h)
         return y
 
-arqs = [[256], [512], [64, 32], [64, 64], [128, 64], [128, 128], [128, 64, 32] , [256, 128], [32, 32, 32], [64, 64, 64], [32,32,32,32], [64,64,64,64], [128,64,32,16]]
-arq = [[64,64,64,64]] ##############Elijo que arquitectura quiero
+arq = [64,64,64,64] ##############Elijo que arquitectura quiero
 
 arq.insert(0,N)
 arq.append(C)
