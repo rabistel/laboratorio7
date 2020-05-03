@@ -48,8 +48,7 @@ class MLP(torch.nn.Module):
         y = output(h)
         return y
 
-arqs = [[256], [512], [64, 32], [64, 64], [128, 64], [128, 128], [128, 64, 32] , [256, 128], [32, 32, 32], [64, 64, 64], [32,32,32,32], [64,64,64,64], [128,64,32,16]]
-arq = arqs[11] ##############Elijo que arquitectura quiero
+arq = [64,64,64,64] ##Elijo que arquitectura quiero
 
 arq.insert(0,N)
 arq.append(C)
@@ -58,14 +57,14 @@ model = MLP(arq)
 ###############################################################################
 
 ###CARGO MI MODELO YA ENTRENADO
-model.load_state_dict(torch.load('11_1500epochs'))
+model.load_state_dict(torch.load('0'))
 
 ###TESTEO EL MODELO
 model.eval() #Empiezo a evaluar el modelo
 
 #Cargo los datos de testeo
-tst_delay = np.load('Datasets\muchos_delays_medidos.npy')
-tst_tgt = np.load('Datasets\muchas_fuentes_pos.npy')
+tst_delay = np.load('delays_medidos_test.npy')
+tst_tgt = np.load('fuentes_pos_test.npy')
 
 tst_data = np.zeros((len(tst_delay), len(tst_delay[0]) + 3)) 
 tst_data[:, :len(tst_delay[0])] = tst_delay
