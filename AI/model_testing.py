@@ -48,7 +48,8 @@ class MLP(torch.nn.Module):
         y = output(h)
         return y
 
-arq = [64,64,64,64] ##Elijo que arquitectura quiero
+arqs = [[256], [512], [64, 32], [64, 64], [128, 64], [128, 128], [128, 64, 32] , [256, 128], [32, 32, 32], [64, 64, 64], [32,32,32,32], [64,64,64,64], [128,64,32,16]]
+arq = [[64,64,64,64]] ##############Elijo que arquitectura quiero
 
 arq.insert(0,N)
 arq.append(C)
@@ -82,7 +83,7 @@ counter = 0
 with torch.no_grad():
     for row in tst_load: #Esto es un minibatch
         counter += 1
-        if counter%10 == 0:
+        if counter%50000 == 0:
             print(counter)
         x = row[:, :len(tst_delay[0])].float()
         z = row[:, len(tst_delay[0]):].float()
