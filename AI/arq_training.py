@@ -12,6 +12,9 @@ trn_data = np.zeros( (len(trn_delay), len(trn_delay[0]) + 3) )
 trn_data[:, :len(trn_delay[0])] = trn_delay
 trn_data[:, len(trn_delay[0]):] = trn_tgt
 
+device = torch.device( "cuda:0" if torch.cuda.is_available() else "cpu")
+
+
 #trn_data son los datos de entrenamiento 
 print('Tamaño del dataset:', len(trn_delay))
 ####
@@ -43,13 +46,13 @@ class MLP(torch.nn.Module):
 #########
 
 #arqs = [ [256], [512], [64, 32], [64, 64], [128, 64], [128, 128], [128, 64, 32] , [256, 128], [32, 32, 32], [64, 64, 64], [32,32,32,32], [64,64,64,64], [128,64,32,16]]
-arqs = [[64,64,64,64], [0]] 
+arqs = [[64,64,64,64]] 
 i = 0
 
 for arq in arqs:
 	arq.insert(0,N)
 	arq.append(C)
-	model = MLP(arq)
+	model = MLP(arq).to(device)
 	costf = torch.nn.MSELoss()
 	optim = torch.optim.RMSprop(model.parameters(),lr = 1e-4)
 
@@ -62,9 +65,9 @@ for arq in arqs:
 	    e = []
 	    for row in trn_load: #Esto es un minibatch
 	        optim.zero_grad() #Reseteo los gradientes
-	        x =  row[:, :len(trn_delay[0])].float() #El -1 significa que no le especifico ese tamano, solo me importa el N. #Osea calculo la cantidad de filas a mano para que este todo bien
+	        x =  row[:, :len(trn_delay[0])].float().to(device) #El -1 significa que no le especifico ese tamano, solo me importa el N. #Osea calculo la cantidad de filas a mano para que este todo bien
 	        #x = x[:,[0,1,2,3,9,10,11,17,18,24,35,36,37,38,39,40,41,42,43,44]]
-	        z =  row[:, len(trn_delay[0]):].float() #Tantas filas como labels me vinieron en mi dataset y tantas columnas como clases tengo
+	        z =  row[:, len(trn_delay[0]):].float().to(device) #Tantas filas como labels me vinieron en mi dataset y tantas columnas como clases tengo
 	        y = model(x) #Calculo el modelo para mis inputs x
 	        error = costf(y,z) #Calculo el error
 	        error.backward() #'Propago' los errores
