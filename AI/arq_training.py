@@ -84,5 +84,5 @@ for arq in arqs:
 
 	nombre = str(i)
 	np.save(nombre + '.npy' , errs)
-	torch.save(model.state_dict(), nombre)
+	torch.save(model.state_dict(), 'modelo_entrenado_'+nombre)
 	i += 1
