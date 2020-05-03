@@ -45,44 +45,41 @@ class MLP(torch.nn.Module):
         return y
 #########
 
-#arqs = [ [256], [512], [64, 32], [64, 64], [128, 64], [128, 128], [128, 64, 32] , [256, 128], [32, 32, 32], [64, 64, 64], [32,32,32,32], [64,64,64,64], [128,64,32,16]]
-arqs = [[64,64,64,64]] 
-i = 0
+arq = [64,64,64,64]
 
-for arq in arqs:
-	arq.insert(0,N)
-	arq.append(C)
-	model = MLP(arq).to(device)
-	costf = torch.nn.MSELoss()
-	optim = torch.optim.RMSprop(model.parameters(),lr = 1e-4)
+arq.insert(0,N)
+arq.append(C)
+model = MLP(arq).to(device)
+costf = torch.nn.MSELoss()
+optim = torch.optim.RMSprop(model.parameters(),lr = 1e-4)
 
-	E, t = 1, 0
-	errs = []
+E, t = 1, 0
+errs = []
 
-	model.train() #Le aviso al programa que voy a empezar a entrenar
+model.train() #Le aviso al programa que voy a empezar a entrenar
 
-	while  E > 1e-5 and t < 1500: #Dos condiciones para poder salir 
-	    e = []
-	    for row in trn_load: #Esto es un minibatch
-	        optim.zero_grad() #Reseteo los gradientes
-	        x =  row[:, :len(trn_delay[0])].float().to(device) #El -1 significa que no le especifico ese tamano, solo me importa el N. #Osea calculo la cantidad de filas a mano para que este todo bien
-	        z =  row[:, len(trn_delay[0]):].float().to(device) #Tantas filas como labels me vinieron en mi dataset y tantas columnas como clases tengo
-	        y = model(x) #Calculo el modelo para mis inputs x
-	        error = costf(y,z) #Calculo el error
-	        error.backward() #'Propago' los errores
-	        optim.step() #Aplico el gradiente
-	        e.append(error.item()) #Estos son los errores dentro del batch
-	        
-	    t += 1 #Recien cuando termino todos los batch, termine una epoca
-	    E = sum(e)/len(e) #El error en cada epoca es el promedio del error que obtuve en cada batch, en esa epoca
-	    errs.append(E)
-	    if t%10 == 0:
-	        print(t) #Cada 10 epocas, printeo el numero de epoca
-	        print('error', E)
+while  E > 1e-5 and t < 1500: #Dos condiciones para poder salir 
+    e = []
+    for row in trn_load: #Esto es un minibatch
+        optim.zero_grad() #Reseteo los gradientes
+        x =  row[:, :len(trn_delay[0])].float().to(device) #El -1 significa que no le especifico ese tamano, solo me importa el N. #Osea calculo la cantidad de filas a mano para que este todo bien
+        z =  row[:, len(trn_delay[0]):].float().to(device) #Tantas filas como labels me vinieron en mi dataset y tantas columnas como clases tengo
+        y = model(x) #Calculo el modelo para mis inputs x
+        error = costf(y,z) #Calculo el error
+        error.backward() #'Propago' los errores
+        optim.step() #Aplico el gradiente
+        e.append(error.item()) #Estos son los errores dentro del batch
+        
+    t += 1 #Recien cuando termino todos los batch, termine una epoca
+    E = sum(e)/len(e) #El error en cada epoca es el promedio del error que obtuve en cada batch, en esa epoca
+    errs.append(E)
+    if t%10 == 0:
+        print(t) #Cada 10 epocas, printeo el numero de epoca
+        print('error', E)
 
-	model.eval() #Le aviso al programa que apartir de ahora voy a emepzar a evaluar el modelo
+model.eval() #Le aviso al programa que apartir de ahora voy a emepzar a evaluar el modelo
 
-	nombre = str(i)
-	np.save(nombre + '.npy' , errs)
-	torch.save(model.state_dict(), 'modelo_entrenado_'+nombre)
-	i += 1
+
+np.save('errores.npy' , errs)
+torch.save(model.state_dict(), 'modelo_entrenado')
+
