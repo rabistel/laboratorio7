@@ -66,7 +66,6 @@ for arq in arqs:
 	    for row in trn_load: #Esto es un minibatch
 	        optim.zero_grad() #Reseteo los gradientes
 	        x =  row[:, :len(trn_delay[0])].float().to(device) #El -1 significa que no le especifico ese tamano, solo me importa el N. #Osea calculo la cantidad de filas a mano para que este todo bien
-	        #x = x[:,[0,1,2,3,9,10,11,17,18,24,35,36,37,38,39,40,41,42,43,44]]
 	        z =  row[:, len(trn_delay[0]):].float().to(device) #Tantas filas como labels me vinieron en mi dataset y tantas columnas como clases tengo
 	        y = model(x) #Calculo el modelo para mis inputs x
 	        error = costf(y,z) #Calculo el error
