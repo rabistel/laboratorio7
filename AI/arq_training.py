@@ -20,7 +20,6 @@ print('Tamaño del dataset:', len(trn_delay))
 B = 32 #batch_size
 P = len(trn_data) #Longitud de mi dataset
 N = len(trn_delay[0]) #Cantidad de unidades de entrada
-N = 20
 C = 3 #Cantidad de unidades de salida son 3 porque es la salida x, y, z
 #####
 #Uso el data loader para tener todo bien puesto 
