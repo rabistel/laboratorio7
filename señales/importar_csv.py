@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-nombreArchivo = 'TEST_20000000_000702.csv' #Aca va el nombre del archivo
+nombreArchivo = 'TEST_20200420_173525_1.csv' #Aca va el nombre del archivo
 ti = time.time()
 data = np.loadtxt(nombreArchivo, skiprows = 2, dtype = 'U')
 print('Importado')
@@ -31,6 +31,6 @@ print('tardo en ver overruns: ', t2-t1)
 print('tardo en reemplazar: '  , tf-t2)
 
 
-
+#np.save('primer_archivo', data, allow_pickle=True, fix_imports=True)
 
 
