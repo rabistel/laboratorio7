@@ -3,17 +3,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-nombreArchivo = 'TEST_20200420_173525_1.csv' #Aca va el nombre del archivo
+nombreArchivo = '2.csv' #Aca va el nombre del archivo
 ti = time.time()
-data = np.loadtxt(nombreArchivo, skiprows = 2, dtype = 'U')
+data = np.loadtxt(nombreArchivo, skiprows = 2, dtype = '<U12')
 print('Importado')
 t1 = time.time()
-overrunsChecking =  np.char.find(data,'Overruns')
+overrunsChecking =  np.char.find(data,'Overrun')
 print('Overruns chequeados')
 overrunsPositions = np.where(overrunsChecking == 0)
 t2 = time.time()
 
-print(len(overrunsPositions))
+print(len(overrunsPositions[0]))
 print('Tiempo parcial', t1-ti)
 counter = 0
 overruns = 0
