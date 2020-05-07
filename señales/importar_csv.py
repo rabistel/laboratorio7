@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 nombreArchivo = '2.csv' #Aca va el nombre del archivo
 ti = time.time()
-data = np.loadtxt(nombreArchivo, skiprows = 2, dtype = '<U12')
+data = np.loadtxt(nombreArchivo, skiprows = 2, dtype = '<U20')
 print('Importado')
 t1 = time.time()
 overrunsChecking =  np.char.find(data,'Overrun')
