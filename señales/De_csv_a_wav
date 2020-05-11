@@ -1,0 +1,14 @@
+from scipy.io import wavfile as wav
+import numpy as np
+
+pop = 'Vcc_sin errores' #Archivo .csv (sin la extension) que quiero transformar a .wav
+
+frec_adq = 25000
+
+datos = np.loadtxt(pop+'.csv', skiprows=2)
+datos = list(datos) #Paso mis datos a formato de lista porque asi estaba en el codigo 'Leo_muchos_sectores.py'
+
+sonido_normalizado = datos/np.max(np.abs(datos))
+sonido_normalizado = sonido_normalizado * 32767 #Para tener int16 deforma el volumen 
+sonido_normalizado = sonido_normalizado.astype('int16')
+wav.write(pop+'.wav',int(frec_adq),sonido_normalizado)
