@@ -33,7 +33,7 @@ nro_puntos = 30
 nro_samples = 7
 radio = 50
 c = 350
-f = 2200
+f = 22000
 
 delays_real = np.ones((nro_puntos*nro_samples, (nro_mics*2)*(nro_mics*2 -1)//2))
 delays_medidos = np.ones((nro_puntos*nro_samples, (nro_mics*2)*(nro_mics*2 -1)//2))
