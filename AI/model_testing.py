@@ -4,6 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 
+
+
+device = torch.device( "cuda:0" if torch.cuda.is_available() else "cpu")
+
 #Cargo los datos de testeo
 tst_delay = np.load('delays_medidos_test.npy')
 tst_tgt = np.load('fuentes_pos_test.npy')
@@ -38,7 +42,7 @@ arq = [64,64,64,64] ##############Elijo que arquitectura quiero
 
 arq.insert(0,N)
 arq.append(C)
-model = MLP(arq)
+model = MLP(arq).to(device)
 
 ###############################################################################
 
@@ -59,8 +63,8 @@ with torch.no_grad():
         counter += 1
         if counter%50000 == 0:
             print(counter)
-        x = row[:, :len(tst_delay[0])].float()
-        z = row[:, len(tst_delay[0]):].float()
+        x = row[:, :len(tst_delay[0])].float().to(device)
+        z = row[:, len(tst_delay[0]):].float().to(device)
         y = model(x)
         error = costf(y,z).sum(dim=1).sqrt()
         e = np.append(e,error.detach().numpy())
