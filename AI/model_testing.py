@@ -13,7 +13,7 @@ tst_data[:, :len(tst_delay[0])] = tst_delay
 tst_data[:, len(tst_delay[0]):] = tst_tgt
 
 #Uso el data loader para tener todo bien puesto 
-BB = 1 #Batch size del dataset de testeo
+BB = 500 #Batch size del dataset de testeo
 tst_load = torch.utils.data.DataLoader(dataset = tst_data, batch_size = BB, shuffle = True)
 
 N = len(tst_delay[0])
@@ -50,9 +50,9 @@ model.eval() #Empiezo a evaluar el modelo
 
 
 #Funcion de costo que uso
-costf = torch.nn.MSELoss()
+costf = torch.nn.MSELoss(reduce= False)
 
-e = [] #Cada elemento de e va a ser el error de cada batch del tst_load
+e = np.array([]) #Cada elemento de e va a ser el error de cada batch del tst_load
 counter = 0
 with torch.no_grad():
     for row in tst_load: #Esto es un minibatch
@@ -62,29 +62,16 @@ with torch.no_grad():
         x = row[:, :len(tst_delay[0])].float()
         z = row[:, len(tst_delay[0]):].float()
         y = model(x)
-        error = costf(y,z)
-        e.append(error.item())
+        error = costf(y,z).sum(dim=1).sqrt()
+        e = np.append(e,error.detach().numpy())
         
-    error_promedio = np.mean(e) #El error en cada epoca es el promedio del error que obtuve en cada batch, en esa epoca
-    desviacion_error = np.std(e) #Desviacion estandar de los errores
+error_promedio = np.mean(e) #El error en cada epoca es el promedio del error que obtuve en cada batch, en esa epoca
+desviacion_error = np.std(e) #Desviacion estandar de los errores
+media_error = np.median(e)
     
-print('El error promedio de la arquitectura es ' + str(error_promedio))
-print('El desvio estandar de la arquitectura es ' + str(desviacion_error))
-
-print('#####')
-#El error real que queremos (distancia entre la fuente real y la obtenida) no es exactamente lo que me da la cost function MSELoss
-#Aca defino bien el error
-e_posta = np.zeros(len(e))
-for i in range(len(e)):
-    e_posta[i] = np.sqrt(e[i]*3)
-    
-#np.save('11_errores_testeo_m', e_posta)
-    
-e_posta_prom = np.mean(e_posta)
-e_posta_desv = np.std(e_posta)
-
-print('El error promedio posta es ' + str(e_posta_prom) + 'm')
-print('El desvio estandar posta es ' + str(e_posta_desv) + 'm')
+print('El error promedio de la arquitectura es ' + str(error_promedio) + 'm')
+print('El desvio estandar de la arquitectura es ' + str(desviacion_error)+ 'm')
+print('La media de la arquitectura es ' + str(media_error)+ 'm')
 
 ######################
 '''
