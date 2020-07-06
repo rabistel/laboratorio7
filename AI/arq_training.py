@@ -50,7 +50,7 @@ arq = [64,64,64,64]
 arq.insert(0,N)
 arq.append(C)
 model = MLP(arq).to(device)
-costf = torch.nn.MSELoss()
+costf = torch.nn.MSELoss(reduce = False)
 optim = torch.optim.RMSprop(model.parameters(),lr = 1e-4)
 
 E, t = 1, 0
@@ -59,19 +59,20 @@ errs = []
 model.train() #Le aviso al programa que voy a empezar a entrenar
 
 while  E > 1e-5 and t < 1500: #Dos condiciones para poder salir 
-    e = []
+    e = np.array([])
     for row in trn_load: #Esto es un minibatch
         optim.zero_grad() #Reseteo los gradientes
         x =  row[:, :len(trn_delay[0])].float().to(device) #El -1 significa que no le especifico ese tamano, solo me importa el N. #Osea calculo la cantidad de filas a mano para que este todo bien
         z =  row[:, len(trn_delay[0]):].float().to(device) #Tantas filas como labels me vinieron en mi dataset y tantas columnas como clases tengo
         y = model(x) #Calculo el modelo para mis inputs x
-        error = costf(y,z) #Calculo el error
+        cost = costf(y,z)
+        error = cost.mean() #Calculo el error
         error.backward() #'Propago' los errores
         optim.step() #Aplico el gradiente
-        e.append(error.item()) #Estos son los errores dentro del batch
+        e = np.append(e, cost.sum(dim = 1).sqrt().detach().numpy())
         
     t += 1 #Recien cuando termino todos los batch, termine una epoca
-    E = sum(e)/len(e) #El error en cada epoca es el promedio del error que obtuve en cada batch, en esa epoca
+    E = np.mean(e) #El error en cada epoca es el promedio del error que obtuve en cada batch, en esa epoca
     errs.append(E)
     if t%10 == 0:
         print(t) #Cada 10 epocas, printeo el numero de epoca
