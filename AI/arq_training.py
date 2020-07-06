@@ -69,7 +69,7 @@ while  E > 1e-5 and t < 1500: #Dos condiciones para poder salir
         error = cost.mean() #Calculo el error
         error.backward() #'Propago' los errores
         optim.step() #Aplico el gradiente
-        e = np.append(e, cost.sum(dim = 1).sqrt().detach().numpy())
+        e = np.append(e, cost.sum(dim = 1).sqrt().mean().item())
         
     t += 1 #Recien cuando termino todos los batch, termine una epoca
     E = np.mean(e) #El error en cada epoca es el promedio del error que obtuve en cada batch, en esa epoca
