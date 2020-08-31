@@ -1,3 +1,6 @@
+#
+# Este codigo tiene como fin la generación de datos de entrenamiento
+#
 import numpy as np
 
 ####### Parametros Editables ###############
@@ -18,9 +21,6 @@ tot_mics[3] 	= np.array([1,0,1])
 ############################################
 
 if default:
-	###################################################
-	###################################################
-	###################################################
 	nro_mics = 10
 	r_mics = 1
 	dist = 30
@@ -42,10 +42,6 @@ if default:
 
 	tot_mics[:int(nro_mics/2), :] = mics0
 	tot_mics[int(nro_mics/2):, :] = mics1
-
-	###################################################
-	###################################################
-	###################################################
 	
 delays_real 	= np.ones((nro_puntos*nro_samples, (nro_mics)*(nro_mics -1)//2))
 delays_medidos 	= np.ones((nro_puntos*nro_samples, (nro_mics)*(nro_mics -1)//2))
