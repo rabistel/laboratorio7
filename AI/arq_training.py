@@ -5,13 +5,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 
-#### Parametros Editables ###############
+####### Parametros Editables ###############
 B   = 250              #batch_size      
 arq = [64,64,64,64]    #arquitectura
 nro_epocas = 1500      #Nro de epocas
 reentrenamiento = 0    # 0 --> No|1--> Si
-modelo_reentrenamiento = 'modelo'    
-#########################################
+modelo_reentrenamiento = 'modelo'
+epoca0 = 0             #epocas preentrenadas
+############################################
 
 trn_delay   = np.load('delays_medidos.npy')  
 trn_tgt     = np.load('fuentes_pos.npy')     
@@ -62,7 +63,7 @@ errs = []
 
 model.train() 
 
-while t < nro_epocas: 
+while (t + epoca0) < nro_epocas: 
     e = np.array([])
     for row in trn_load:
         optim.zero_grad()
@@ -85,7 +86,7 @@ while t < nro_epocas:
     
     if t%25 == 0:
         np.save('errores.npy' , errs)
-        torch.save(model.state_dict(), 'modelo_' + str(t) +'_epocas')
+        torch.save(model.state_dict(), 'modelo_' + str(t+epoca0) +'_epocas')
 
 model.eval() 
 
