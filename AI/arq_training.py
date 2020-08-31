@@ -81,8 +81,10 @@ while (t + epoca0) < nro_epocas:
     errs.append(E)
     
     if t%10 == 0:
-        print(t)
-        print('Error', E)
+        print('-------------- Entrenando ', str(((t+epoca0)/nro_epocas)*100) + '%','--------------------')
+        print('Numero de epocas: ' , t)
+        print('Error promedio: ', E)
+        print('------------------------------------------')
     
     if t%25 == 0:
         np.save('errores.npy' , errs)
