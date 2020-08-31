@@ -90,6 +90,7 @@ while (t + epoca0) < nro_epocas:
         np.save('errores.npy' , errs)
         torch.save(model.state_dict(), 'modelo_' + str(t+epoca0) +'_epocas')
 
+print('-------------- ENTRENAMIENTO FINALIZADO --------------')
 model.eval() 
 
 
