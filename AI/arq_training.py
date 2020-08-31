@@ -8,7 +8,9 @@ import torch
 #### Parametros Editables ###############
 B   = 250              #batch_size      
 arq = [64,64,64,64]    #arquitectura
-nro_epocas = 1500      #Nro de epocas    
+nro_epocas = 1500      #Nro de epocas
+reentrenamiento = 0    # 0 --> No|1--> Si
+modelo_reentrenamiento = 'modelo'    
 #########################################
 
 trn_delay   = np.load('delays_medidos.npy')  
@@ -48,6 +50,10 @@ arq.insert(0,N)
 arq.append(C)
 
 model = MLP(arq).to(device)
+
+if reentrenamiento == '1':
+    model.load_state_dict(torch.load(modelo_reentrenamiento))
+
 costf = torch.nn.MSELoss(reduce = False)
 optim = torch.optim.RMSprop(model.parameters(),lr = 1e-4)
 
