@@ -6,12 +6,12 @@ import matplotlib.pyplot as plt
 import torch
 
 ####### Parametros Editables ###############
-B   = 250              #batch_size      
-arq = [64,64,64,64]    #arquitectura
-nro_epocas = 1500      #Nro de epocas
+B               = 250                 
+arq             = [64,64,64,64]
+nro_epocas      = 1500      
 reentrenamiento = False    
 modelo_reentrenamiento = 'modelo'
-epoca0 = 0             #epocas preentrenadas
+epoca0          = 0    
 ############################################
 
 trn_delay   = np.load('delays_medidos.npy')  
@@ -67,14 +67,14 @@ while (t + epoca0) < nro_epocas:
     e = np.array([])
     for row in trn_load:
         optim.zero_grad()
-        x =  row[:, :len(trn_delay[0])].float().to(device)
-        z =  row[:, len(trn_delay[0]):].float().to(device)
-        y = model(x)
-        cost = costf(y,z)
+        x     =  row[:, :len(trn_delay[0])].float().to(device)
+        z     =  row[:, len(trn_delay[0]):].float().to(device)
+        y     = model(x)
+        cost  = costf(y,z)
         error = cost.mean()
         error.backward()
         optim.step()
-        e = np.append(e, cost.sum(dim = 1).sqrt().mean().item())
+        e     = np.append(e, cost.sum(dim = 1).sqrt().mean().item())
         
     t += 1 
     E = np.mean(e) 
