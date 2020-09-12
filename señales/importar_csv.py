@@ -37,5 +37,5 @@ print('tiempo de reemplazo de overruns: '  	, tf-t2)
 
 
 if guardar:
-	np.save(nombrearchivo + '.csv', data)
+	np.savetxt(nombrearchivo + '.csv', data, delimiter=",")
 
