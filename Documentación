@@ -1,0 +1,130 @@
+-----------------> dataset_generator.py <-----------------
+
+Código para generar datasets de entrenamiento del perceptron multicapa (MLP). El dataset consiste de fuentes distribuidas homogéneamente dentro de una esfera de radio determinado, centrada en el centro de la configuración de micrófonos. Para cada fuente se calculan los delays entre todos los pares de micrófonos, y a cada uno de los delays se les asigna algún error aleatorio en un rango razonable según las características del grabador disponible.
+
+El código devuelve (y guarda) para cada una de las fuentes: los delays reales (sin error), los delays medidos (es decir con su correspondiente error), y la posición de la fuente.
+
+Parámetros editables:
+    • default: Si es ‘True’, el arreglo de micrófonos consiste en dos dispositivos de 5 micrófonos cada uno, ubicados en una esfera de radio 1 m, y ambos dispositivos separados en una distancia de 30 m. Para ver las posiciones exactas en este caso, ver el ‘if defalut:’. Si es ‘False’, la configuración de micrófonos se elige libremente.
+    • nro_puntos: Cantidad de fuentes distintas que formarán parte del dataset.
+    • nro_samples: Cantidad de repeticiones de cada una de las fuentes, donde cada repetición tiene un error distinto y aleatorio en los delays. El objetivo de esto es que el MLP aprenda que una misma fuente puede generar delays distintos debido al error en la medición.
+    • radio: Radio máximo en metros desde el centro de la distribución de micrófonos con el cual se generarán las fuentes del dataset.
+    • c: Velocidad del sonido en m/s. Si se conoce la temperatura a la cual fueron hechas las mediciones, se puede usar un valor más exacto de esta velocidad.
+    • f: Frecuencia de muestreo con la cual fueron hechas las grabaciones.
+    • error_medicion: Error máximo que se le asignará a los delays. En el mejor caso posible este error vale 2/f. Esto es porque cada medición tiene error 1/f, por lo tanto, los delays pueden llegar a tener el doble.
+# -----------------------------------------
+La siguiente sección es irrelevante si ‘default = True’.
+    • nro_mics: Cantidad total de micrófonos.
+    • tot_mics: Array en donde se guardan las posiciones de los micrófonos. En principio, no cambiar este parámetro.
+    • tot_mics[i]: Posición del micrófono i-ésimo. Esta línea debe repetirse para cada micrófono que haya. Deben especificarse la posición tridimensional de este micrófono en forma de array, por ejemplo, numpy.array([1,0,0]).
+
+
+-----------------> arq_training.py <-----------------
+
+Código para entrenar al MLP. Una vez entrenado, a partir de un set de delays predice la posición de la fuente que los generó, siempre con algún error. Para que funcione correctamente debe encontrarse en la misma ubicación que ‘dataset_generator.py’, y este último debe haber sido corrido previamente ya que se entrenará al modelo con los datasets generados con este código. También puede usarse ‘arq_training.py’ para continuar entrenando un modelo que ya fue previamente entrenado.
+
+El código automáticamente utiliza la GPU en caso de que esté disponible, lo cual agiliza el entrenamiento. Sino, se utiliza la CPU.
+
+Cada 10 épocas se imprime el error promedio del entrenamiento, y cada 25 se guarda el modelo junto con sus errores. Por ‘error’ entiéndase la distancia euclidea entre la fuente real y la predicha por el modelo, promediada para todas las fuentes del dataset.
+
+Parámetros editables:
+    • B: Batch size del MLP. En caso de no saber que representa este parámetro, se puede fijar en 250.
+    • arq: Arquitectura del MLP. Debe estar en forma de lista, indicando solo las capas internas. El default es [64,64,64,64].
+    • nro_epocas: Cantidad de épocas que se quiere entrenar. Se puede indicar un valor alto (por ejemplo, 1500) y cortar el entrenamiento en el momento que se desee ya que cada 25 épocas el modelo se guarda.
+    • reentrenamiento: Si se quiere continuar entrenando un modelo que ya tuvo un entrenamiento previo, este parámetro debe ser ‘True’. En caso contrario debe ser ‘False’.
+    • modelo_reentrenamiento: Este parámetro es relevante solo si ‘reentrenamiento = True’. En tal caso, debe especificarse el nombre del modelo a seguir entrenando.
+    • epoca0:  Este parámetro es relevante solo si ‘reentrenamiento = True’. En tal caso, debe especificarse el número  de épocas de entrenamiento que el modelo ya tuvo.
+      
+
+-----------------> test_dataset_generator.py <-----------------
+
+Código diseñado para generar datasets de testeo. Es esencialmente igual a ‘dataset_generator.py’. Para su correcto funcionamiento, debe estar guardado en la misma carpeta que ‘dataset_generator.py’ y ‘arq_training.py’. Este código se utiliza para crear un dataset con el cual luego testear a la arquitectura ya entrenada. La idea es que el testeo se haga con fuentes que el modelo nunca vio durante su entrenamiento, para chequear que no hubo overfitting.
+
+El dataset consiste de fuentes distribuidas homogéneamente dentro de una esfera de radio determinado, centrada en el centro de la configuración de micrófonos. Para cada fuente se calculan los delays entre todos los pares de micrófonos, y a cada uno de los delays se les asigna algún error aleatorio en un rango razonable según las características del grabador disponible.
+
+El código devuelve (y guarda) para cada una de las fuentes: los delays reales (sin error), los delays medidos (es decir con su correspondiente error), y la posición de la fuente.
+
+Parámetros editables:
+    • default: Si es ‘True’, el arreglo de micrófonos consiste en dos dispositivos de 5 micrófonos cada uno, ubicados en una esfera de radio 1 m, y ambos dispositivos separados en una distancia de 30 m. Para ver las posiciones exactas en este caso, ver el ‘if defalut:’. Si es ‘False’, la configuración de micrófonos se elige libremente.
+    • nro_puntos: Cantidad de fuentes distintas que formarán parte del dataset.
+    • nro_samples: Cantidad de repeticiones de cada una de las fuentes, donde cada repetición tiene un error distinto y aleatorio en los delays. En general, para el testeo este parámetro se toma como 1.
+    • radio: Radio máximo en metros desde el centro de la distribución de micrófonos con el cual se generarán las fuentes del dataset.
+    • c: Velocidad del sonido en m/s. Si se conoce la temperatura a la cual fueron hechas las mediciones, se puede usar un valor más exacto de esta velocidad.
+    • f: Frecuencia de muestreo con la cual fueron hechas las grabaciones.
+    • error_medicion: Error máximo que se le asignará a los delays. En el mejor caso posible este error vale 2/f. Esto es porque cada medición tiene error 1/f, por lo tanto, los delays pueden llegar a tener el doble.
+# -----------------------------------------
+La siguiente sección es irrelevante si ‘default = True’.
+    • nro_mics: Cantidad total de micrófonos.
+    • tot_mics: Array en donde se guardan las posiciones de los micrófonos. En principio, no cambiar este parámetro.
+    • tot_mics[i]: Posición del micrófono i-ésimo. Esta línea debe repetirse para cada micrófono que haya. Deben especificarse la posición tridimensional de este micrófono en forma de array, por ejemplo, numpy.array([1,0,0]).
+
+Por consistencia, todos los parámetros editables (a excpeción de nro_puntos y nro_samples) deben ser iguales que los que se usaron en ‘dataset_generator.py’. Eventualmente se puede tomar un valor distinto de ‘radio’ para testear en una zona distinta de donde se entrenó. También se podría tomar un valor diferente de ‘error_medicion’ para evaluar la respuesta del sistema al ser testeado con errores mayores o menores que con los que fue entrenado.
+
+
+-----------------> model_testing.py <-----------------
+
+Código para testear un modelo ya entrenado. Para que funcione correctamente debe estar en la misma carpeta que ‘test_dataset_generator.py’ ya que se usarán los datasets generados con este código para testear, y en la misma carpeta que ‘arq_training.py’ ya que el modelo que se testeará es el entrenado con este código.
+
+El código automáticamente utiliza la GPU en caso de que esté disponible, lo cual agiliza el testeo. Sino, se utiliza la CPU.
+
+El código calcula (y guarda) el error en módulo entre la posición real y la predicha por el modelo, para cada una de las fuentes del dataset generado con ‘test_dataset_generator.py’. Además devuelve algunas estadísticas sobre estos errores. Se sabe que no hubo overfitting si estos errores no son significativamente mayores a los errores de entrenamiento.
+
+Parámetros editables:
+    • arq: Arquitectura del modelo a testear. Debe ser la misma que se utilizó en ‘arq_trining.py’ para entrenar al modelo. Debe estar en forma de lista, indicando solo las capas internas. El default es [64,64,64,64].
+    • BB: Batch size del MLP. En caso de no saber que representa este parámetro, se puede fijar en 500.
+    • modelo_testeo: Nombre del modelo a testear. Debe usarse el modelo que se guardo al correr el código ‘arq_training.py’.
+
+
+-----------------> arq_use.py <-----------------
+
+Código para evaluar un único set de delays obtenidos en una medición, utilizando un modelo previamente entrenado para calcular la posición de la fuente correspondiente.
+
+El código además permite hacer una corrección de la velocidad del sonido. Sin importar que valor se haya utilizado para entrenar, si al momento de medir se conoce la temperatura y por lo tanto se conoce el verdadero valor de la velocidad, este código permite hacer una corrección para tener en cuenta la diferencia entre estos valores.
+
+Parámetros editables:
+    • tst_delay: Array con los delays medidos. Deben estar en el orden correcto, compatible con  como es el dataset que se usó para entrenar la red.
+    • c_real: Velocidad del sonido real en el momento de la medicion, la cual depende de la temperatura. Si este valor no se conoce, puede fijarse igual que el valor de ‘c_dataset’.
+    • c_dataset: Velocidad del sonido usada en el dataset de entrenamiento.
+    • modelo: Nombre del modelo que se quiere usar.
+    • arq: Arquitectura del modelo a usar. Debe ser la misma que se utilizó para entrenar al modelo. Debe estar en forma de lista, indicando solo las capas internas. El default es [64,64,64,64].
+
+
+-----------------> Conversion_bin_a_csv.py <-----------------
+
+Código para transformar un archivo .bin (tipo de archivo que devuelven las Arduino), que en general será una grabación, a un archivo .csv. También es posible convertir todos los archivos de una carpeta simultáneamente. El código además guarda los archivos .csv.
+
+Para que el código funcione correctamente, en la misma carpeta donde está guardado debe estar el archivo ‘read’ que se encuentra en el github https://github.com/julianamette/laboratorio7/señales.
+
+Parámetros editables:
+    • convertir_archivo: ‘True’ si se quiere convertir de .bin a .csv a un único archivo. ‘False’ si se quieren convertir a todos los archivos de una carpeta en particular.
+    • convertir_carpeta: ‘True’ si se quiere convertir de .bin a .csv a todos los archivos pertenecientes a una carpeta en específico. ‘False’ si se quiere convertir un único archivo.
+    • nombre_archivo: Nombre del archivo que quiere convertirse a .csv. El nombre debe escribirse sin la extensión .bin. Parámetro relevante únicamente si ‘conertir_archivo = True’.
+    • nombre_carpeta: Nombre de la carpeta donde se encuentran todos los archivos que quieren convertirse a .csv. Por ejemplo, nombre_carpeta = ‘grabaciones/arduino1/’. Parámetro relevante únicamente si ‘conertir_carpeta = True’.
+
+
+-----------------> importar_csv.py <-----------------
+
+Código que toma un archivo .csv (que sale como resultado de aplicar ‘Conversion_bin_a_csv.py’) y  corrije todos los overruns presentes. Luego guarda el .csv corregido. Los overruns son errores que cometen las Arduino. Cuando el buffer se llena, comienzan a perder puntos. Pero las Arduino reconocen que esto pasa, y son capaces de guardar cuantos puntos perdieron y en qué momento. Aunque esto no sirve para reconstruir la señal, si sirve para recuperar la sincronía entre grabaciones. 
+
+Los overruns no son los únicos errores que cometen las Arduino. Para mayor detalle ver el informe final de laboratorio.
+
+Parámetros editables:
+    • nombrearchivo: Nombre del archivo que quiere corregirse. El nombre debe escribirse sin la extensión .csv.
+
+
+-----------------> De_csv_a_wav.py <-----------------
+
+Código que transforma una grabación hecha con un Arduino (luego de que pase por ‘Conversion_bin_a_csv.py’ y ‘importar_csv.py’) en un archivo de audio, mas específicamente, en un archivo .wav. Además guarda el archivo .wav.
+
+Parámetros editables:
+    • nombre_archivo: Nombre del archivo que quiere transformarse a .wav. El nombre debe escribirse sin la extensión .csv.
+    • frec_adq: Frecuencia de adquisición que se utilizó para la grabación.
+    
+
+-----------------
+Este código fue hecho con mucho trabajo y cariño <3 Por Julian Amette y Bianca Balzarini 
+julianamette3@gmail.com ; balzarini.bianca@gmail.com
+
+ 
+ 
+ 
