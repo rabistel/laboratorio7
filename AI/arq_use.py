@@ -10,6 +10,7 @@ tst_delay = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 c_real = 343
 c_dataset = 350
 modelo = 'modelo_140_epocas'
+arq = [64,64,64,64] 
 ############################################
 
 device = torch.device( "cuda:0" if torch.cuda.is_available() else "cpu") 
@@ -33,7 +34,7 @@ class MLP(torch.nn.Module):
         y = output(h)
         return y
 
-arq = [64,64,64,64] 
+
 arq.insert(0,N)
 arq.append(C)
 model = MLP(arq).to(device)
