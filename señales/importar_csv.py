@@ -5,7 +5,10 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
+####### Parametros editables
 nombrearchivo = 'nombredearchivo' 
+guardar = True
+##############
 ti = time.time()
 data = np.loadtxt(nombrearchivo + '.csv', skiprows = 2, dtype = '<U20')
 print('Importado')
@@ -33,5 +36,6 @@ print('tiempo de busqueda de overruns: '	, t2-t1)
 print('tiempo de reemplazo de overruns: '  	, tf-t2)
 
 
-
+if guardar:
+	np.save(nombrearchivo + '.csv', data)
 
