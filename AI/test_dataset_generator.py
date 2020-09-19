@@ -56,8 +56,8 @@ for i in range(nro_puntos):
 	tiempos = np.linalg.norm((tot_mics - fuentes), axis = 1)/c
 	fuentes_pos[i*nro_samples:(i+1)*nro_samples] *= fuentes[0]
 	pos = 0
-	for j in range(nro_mics*2):
-		for k in range(j+1, nro_mics*2):
+	for j in range(nro_mics):
+		for k in range(j+1, nro_mics):
 			delays_real[i*nro_samples:(i+1)*nro_samples, pos] *= tiempos[j] - tiempos[k]
 			delays_medidos[i*nro_samples:(i+1)*nro_samples, pos] *= (tiempos[j] - tiempos[k]) + (np.random.rand(nro_samples)*2 -1) * (error_medicion)
 			pos += 1
