@@ -64,4 +64,4 @@ for i in range(nro_puntos):
 
 np.save('delays_real_test.npy'	 , delays_real   )
 np.save('delays_medidos_test.npy', delays_medidos)
-np.save('fuentes_pos_test'		 , fuentes_pos   )
+np.save('fuentes_pos_test.npy'		 , fuentes_pos   )
